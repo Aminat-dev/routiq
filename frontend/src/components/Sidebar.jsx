@@ -48,35 +48,57 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:flex-col w-64 fixed inset-y-0 left-0 z-30 glass border-r">
-      <div className="px-6 py-5 border-b divider">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg shadow-brand-500/30">
+    <aside className="hidden md:flex md:flex-col w-64 fixed inset-y-0 left-0 z-30 bg-[var(--surface-strong)] border-r border-[var(--divider)]">
+      {/* Brand */}
+      <div className="px-5 py-5 border-b border-[var(--divider)]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-800 text-white flex items-center justify-center shadow-lg shadow-brand-500/20">
             <Sparkles size={18} />
           </div>
-          <div className="font-semibold text-lg tracking-tight">AI Habit Tracker</div>
+
+          <div>
+            <div className="font-semibold text-lg tracking-tight">Routiq</div>
+
+            <div className="text-[10px] tracking-[0.16em] text-faint">
+              BUILD BETTER ROUTINES
+            </div>
+          </div>
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-5 space-y-1">
         {nav.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${isActive
-                ? "bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-700 dark:text-brand-300 ring-1 ring-brand-500/20"
-                : "text-soft hover:bg-[var(--surface-hover)]"
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+                isActive
+                  ? "bg-brand-50 dark:bg-brand-500/10 text-brand-800 dark:text-brand-300"
+                  : "text-soft hover:bg-[var(--surface-hover)]"
               }`
             }
           >
-            <Icon size={18} />
-            {label}
+            {({ isActive }) => (
+              <>
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
+                    isActive ? "bg-brand-600 text-white" : "text-muted"
+                  }`}
+                >
+                  <Icon size={17} />
+                </div>
+
+                <span>{label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      <div className="p-3 border-t divider space-y-1">
+      {/* Bottom controls */}
+      <div className="p-3 border-t border-[var(--divider)] space-y-1">
         <button
           onClick={toggle}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-soft hover:bg-[var(--surface-hover)] transition"
@@ -93,18 +115,21 @@ export default function Sidebar() {
           Settings
         </button>
 
-        <div className="px-2 py-2 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white font-semibold flex items-center justify-center shadow-md shadow-brand-500/30">
+        <div className="mt-2 rounded-2xl bg-brand-50/70 dark:bg-brand-500/10 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-brand-700 text-white font-semibold flex items-center justify-center">
             {user?.avatar || user?.name?.charAt(0).toUpperCase() || "U"}
           </div>
+
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium truncate">{user?.name}</div>
+
             <div className="text-xs text-faint truncate">{user?.email}</div>
           </div>
+
           <button
             onClick={logout}
             title="Log out"
-            className="p-2 rounded-lg text-soft hover:bg-[var(--surface-hover)]"
+            className="p-2 rounded-lg text-soft hover:bg-white/60 dark:hover:bg-white/5 transition"
           >
             <LogOut size={16} />
           </button>
@@ -119,6 +144,7 @@ export default function Sidebar() {
         <div className="space-y-4">
           <div>
             <label className="label">Display name</label>
+
             <input
               className="input"
               value={name}
@@ -126,16 +152,18 @@ export default function Sidebar() {
             />
           </div>
 
-          <label className="flex items-start gap-3 p-3 rounded-xl glass cursor-pointer hover:bg-[var(--surface-hover)]">
+          <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--divider)] cursor-pointer hover:bg-[var(--surface-hover)]">
             <input
               type="checkbox"
               checked={morning}
               onChange={(e) => setMorning(e.target.checked)}
               className="mt-1 accent-brand-600"
             />
+
             <div>
               <div className="text-sm font-medium">Morning motivation</div>
-              <div className="text-xs text-faint">
+
+              <div className="text-xs text-faint mt-1">
                 Show a short personalised AI message every morning on the
                 dashboard.
               </div>
@@ -149,8 +177,9 @@ export default function Sidebar() {
             >
               Cancel
             </button>
+
             <button className="btn-primary" onClick={save} disabled={saving}>
-              {saving ? "Saving..." : "Save"}
+              {saving ? "Saving..." : "Save changes"}
             </button>
           </div>
         </div>
