@@ -122,260 +122,346 @@ export default function Habits() {
 
   if (loading) return <LoadingSpinner full />;
 
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            All habits
-          </h1>
-          <p className="text-sm text-muted mt-0.5">
-            Manage every habit you've ever created.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="btn-secondary"
-            onClick={() => setSuggestOpen(true)}
-          >
-            <Sparkles size={14} />
-            <span className="hidden sm:inline">Suggest</span>
-          </button>
-          <button
-            className="btn-primary"
-            onClick={() => {
-              setEditing(null);
-              setFormOpen(true);
-            }}
-          >
-            <Plus size={14} />
-            New habit
-          </button>
-        </div>
-      </div>
+ return (
+   <div className="space-y-7 animate-fade-in">
+     {/* Page header */}
+     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+       <div>
+         <div className="text-sm text-muted">Your routine library</div>
 
-      <div className="card p-4">
-        <div className="flex flex-col md:flex-row gap-3 md:items-center">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-faint pointer-events-none"
-            />
-            <input
-              className="input pl-9"
-              placeholder="Search habits..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <select
-            className="input md:w-52"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="All">All categories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-          <div className="inline-flex rounded-xl glass overflow-hidden text-sm">
-            <button
-              onClick={() => setShowArchived(false)}
-              className={`px-3.5 py-2.5 font-medium transition ${
-                !showArchived
-                  ? "bg-brand-500/15 text-brand-700 dark:text-brand-300"
-                  : "text-soft hover:bg-[var(--surface-hover)]"
-              }`}
-            >
-              Active · {activeCount}
-            </button>
-            <button
-              onClick={() => setShowArchived(true)}
-              className={`px-3.5 py-2.5 font-medium transition border-l divider ${
-                showArchived
-                  ? "bg-brand-500/15 text-brand-700 dark:text-brand-300"
-                  : "text-soft hover:bg-[var(--surface-hover)]"
-              }`}
-            >
-              Archived · {archivedCount}
-            </button>
-          </div>
-        </div>
-      </div>
+         <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
+           Habits
+         </h1>
 
-      {filtered.length === 0 ? (
-        <div className="card p-10 text-center">
-          <div className="text-5xl mb-3">{showArchived ? "🗂️" : "🎯"}</div>
-          <div className="font-medium">
-            {showArchived
-              ? "Nothing archived"
-              : habits.length === 0
-              ? "No habits yet"
-              : "No habits match your filter"}
-          </div>
-          <div className="text-sm text-muted mt-1">
-            {showArchived
-              ? "Archived habits keep their history but stay out of your daily list."
-              : habits.length === 0
-              ? "Start small — something you can do in under 5 minutes."
-              : "Try clearing your search or category filter."}
-          </div>
-          {!showArchived && habits.length === 0 && (
-            <button
-              className="btn-primary mt-4"
-              onClick={() => setFormOpen(true)}
-            >
-              <Plus size={14} />
-              Create habit
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {filtered.map((h) => {
-            const keys = logsByHabit[h._id] || [];
-            const { current, longest } = streakFromKeys(keys);
-            return (
-              <div
-                key={h._id}
-                className={`card p-4 flex items-center gap-4 ${
-                  h.isArchived ? "opacity-70" : ""
-                }`}
-              >
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
-                  style={{ background: `${h.color}26`, color: h.color }}
-                >
-                  {h.icon}
-                </div>
+         <p className="mt-2 text-sm text-soft max-w-xl">
+           Create, organize, and manage the routines you're building with
+           Routiq.
+         </p>
+       </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <div className="font-medium truncate">{h.name}</div>
-                    <span className="chip">{h.category}</span>
-                    <span className="chip">{h.frequency}</span>
-                    {h.isArchived && (
-                      <span className="chip bg-amber-500/15 text-amber-700 dark:text-amber-300">
-                        Archived
-                      </span>
-                    )}
-                  </div>
-                  {h.description && (
-                    <div className="text-sm text-muted truncate mt-0.5">
-                      {h.description}
-                    </div>
-                  )}
-                </div>
+       <div className="flex items-center gap-2">
+         <button className="btn-secondary" onClick={() => setSuggestOpen(true)}>
+           <Sparkles size={15} />
+           <span className="hidden sm:inline">Ask Routiq</span>
+         </button>
 
-                <div className="hidden sm:flex items-center gap-4 text-sm">
-                  <div
-                    className="flex items-center gap-1"
-                    title="Current streak"
-                  >
-                    <Flame
-                      size={14}
-                      className={current > 0 ? "text-orange-500" : "text-faint"}
-                    />
-                    <span className="font-medium">{current}</span>
-                  </div>
-                  <div
-                    className="flex items-center gap-1"
-                    title="Longest streak"
-                  >
-                    <Trophy size={14} className="text-amber-500" />
-                    <span className="font-medium">{longest}</span>
-                  </div>
-                  <div className="text-muted text-xs hidden md:block">
-                    {keys.length} total
-                  </div>
-                </div>
+         <button
+           className="btn-primary"
+           onClick={() => {
+             setEditing(null);
+             setFormOpen(true);
+           }}
+         >
+           <Plus size={15} />
+           New habit
+         </button>
+       </div>
+     </div>
 
-                <div className="flex items-center gap-1">
-                  <button
-                    className="btn-ghost p-2"
-                    onClick={() => {
-                      setEditing(h);
-                      setFormOpen(true);
-                    }}
-                    title="Edit"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    className="btn-ghost p-2"
-                    onClick={() => archive(h)}
-                    title={h.isArchived ? "Unarchive" : "Archive"}
-                  >
-                    {h.isArchived ? (
-                      <ArchiveRestore size={16} />
-                    ) : (
-                      <Archive size={16} />
-                    )}
-                  </button>
-                  <button
-                    className="btn-ghost p-2 text-rose-500 hover:bg-rose-500/10 hover:text-rose-400"
-                    onClick={() => setDeleteTarget(h)}
-                    title="Delete"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+     {/* Library overview */}
+     <div className="grid sm:grid-cols-2 gap-3 max-w-xl">
+       <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-4 flex items-center gap-3">
+         <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 flex items-center justify-center">
+           <Flame size={18} />
+         </div>
 
-      <Modal
-        open={formOpen}
-        onClose={() => {
-          setFormOpen(false);
-          setEditing(null);
-        }}
-        title={editing ? "Edit habit" : "New habit"}
-      >
-        <HabitForm
-          initial={editing}
-          submitting={submitting}
-          onCancel={() => {
-            setFormOpen(false);
-            setEditing(null);
-          }}
-          onSubmit={save}
-        />
-      </Modal>
+         <div>
+           <div className="text-xl font-semibold">{activeCount}</div>
+           <div className="text-xs text-muted">Active habits</div>
+         </div>
+       </div>
 
-      <Modal
-        open={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        title="Delete habit?"
-        maxWidth="max-w-sm"
-      >
-        <p className="text-sm text-soft">
-          This will permanently delete <b>{deleteTarget?.name}</b> and all its
-          history. This can't be undone.
-        </p>
-        <div className="flex justify-end gap-2 mt-5">
-          <button
-            className="btn-secondary"
-            onClick={() => setDeleteTarget(null)}
-          >
-            Cancel
-          </button>
-          <button
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 px-4 py-2.5 text-sm font-medium text-white hover:brightness-110 shadow-lg shadow-rose-500/30 transition"
-            onClick={() => remove(deleteTarget)}
-          >
-            Delete
-          </button>
-        </div>
-      </Modal>
+       <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-4 flex items-center gap-3">
+         <div className="w-10 h-10 rounded-xl bg-(--surface-hover) text-muted flex items-center justify-center">
+           <Archive size={18} />
+         </div>
 
-      <HabitSuggestionModal
-        open={suggestOpen}
-        onClose={() => setSuggestOpen(false)}
-        onAccept={acceptSuggestion}
-      />
-    </div>
-  );
+         <div>
+           <div className="text-xl font-semibold">{archivedCount}</div>
+           <div className="text-xs text-muted">Archived habits</div>
+         </div>
+       </div>
+     </div>
+
+     {/* Filters */}
+     <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-3 md:p-4">
+       <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+         <div className="relative flex-1">
+           <Search
+             size={16}
+             className="absolute left-3 top-1/2 -translate-y-1/2 text-faint pointer-events-none"
+           />
+
+           <input
+             className="input pl-9"
+             placeholder="Search your habits..."
+             value={query}
+             onChange={(e) => setQuery(e.target.value)}
+           />
+         </div>
+
+         <select
+           className="input lg:w-52"
+           value={category}
+           onChange={(e) => setCategory(e.target.value)}
+         >
+           <option value="All">All categories</option>
+
+           {CATEGORIES.map((c) => (
+             <option key={c}>{c}</option>
+           ))}
+         </select>
+
+         <div className="inline-flex rounded-xl border border-(--divider) bg-(--bg-base) p-1 text-sm">
+           <button
+             onClick={() => setShowArchived(false)}
+             className={`flex-1 lg:flex-none px-4 py-2 rounded-lg font-medium transition ${
+               !showArchived
+                 ? "bg-(--surface-strong) text-brand-700 dark:text-brand-300 shadow-sm"
+                 : "text-muted hover:text-(--text)"
+             }`}
+           >
+             Active
+             <span className="ml-1.5 text-xs opacity-70">{activeCount}</span>
+           </button>
+
+           <button
+             onClick={() => setShowArchived(true)}
+             className={`flex-1 lg:flex-none px-4 py-2 rounded-lg font-medium transition ${
+               showArchived
+                 ? "bg-(--surface-strong) text-brand-700 dark:text-brand-300 shadow-sm"
+                 : "text-muted hover:text-(--text)"
+             }`}
+           >
+             Archived
+             <span className="ml-1.5 text-xs opacity-70">{archivedCount}</span>
+           </button>
+         </div>
+       </div>
+     </div>
+
+     {/* Habit library */}
+     {filtered.length === 0 ? (
+       <div className="rounded-3xl border border-dashed border-(--divider) bg-(--surface) px-6 py-14 text-center">
+         <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 flex items-center justify-center mx-auto">
+           {showArchived ? <Archive size={22} /> : <Plus size={22} />}
+         </div>
+
+         <h3 className="mt-4 font-semibold">
+           {showArchived
+             ? "No archived habits"
+             : habits.length === 0
+               ? "Your routine starts here"
+               : "No habits found"}
+         </h3>
+
+         <p className="mt-2 text-sm text-muted max-w-sm mx-auto leading-relaxed">
+           {showArchived
+             ? "Habits you archive will stay here with their history intact."
+             : habits.length === 0
+               ? "Start with one small habit you can realistically repeat."
+               : "Try changing your search or category filter."}
+         </p>
+
+         {!showArchived && habits.length === 0 && (
+           <button
+             className="btn-primary mt-5"
+             onClick={() => {
+               setEditing(null);
+               setFormOpen(true);
+             }}
+           >
+             <Plus size={14} />
+             Create your first habit
+           </button>
+         )}
+       </div>
+     ) : (
+       <div className="grid lg:grid-cols-2 gap-4">
+         {filtered.map((h) => {
+           const keys = logsByHabit[h._id] || [];
+           const { current, longest } = streakFromKeys(keys);
+
+           return (
+             <div
+               key={h._id}
+               className={`group rounded-3xl border border-(--divider) bg-(--surface-strong) p-5 transition hover:border-brand-500/20 hover:shadow-(--shadow) ${
+                 h.isArchived ? "opacity-75" : ""
+               }`}
+             >
+               {/* Habit top */}
+               <div className="flex items-start gap-3">
+                 <div
+                   className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
+                   style={{
+                     background: `${h.color}18`,
+                     color: h.color,
+                   }}
+                 >
+                   {h.icon}
+                 </div>
+
+                 <div className="flex-1 min-w-0">
+                   <div className="flex items-center gap-2 flex-wrap">
+                     <h3 className="font-semibold truncate">{h.name}</h3>
+
+                     {h.isArchived && (
+                       <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                         Archived
+                       </span>
+                     )}
+                   </div>
+
+                   {h.description && (
+                     <p className="mt-1 text-sm text-muted line-clamp-2">
+                       {h.description}
+                     </p>
+                   )}
+                 </div>
+               </div>
+
+               {/* Habit metadata */}
+               <div className="mt-5 flex items-center gap-2 flex-wrap">
+                 <span className="text-xs px-2.5 py-1.5 rounded-lg bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300">
+                   {h.category}
+                 </span>
+
+                 <span className="text-xs px-2.5 py-1.5 rounded-lg bg-(--surface-hover) text-muted capitalize">
+                   {h.frequency}
+                 </span>
+               </div>
+
+               {/* Statistics */}
+               <div className="mt-5 pt-4 border-t border-(--divider) grid grid-cols-3 gap-3">
+                 <div>
+                   <div className="flex items-center gap-1.5 text-xs text-muted">
+                     <Flame
+                       size={13}
+                       className={current > 0 ? "text-amber-500" : "text-faint"}
+                     />
+                     Current
+                   </div>
+
+                   <div className="mt-1 text-sm font-semibold">
+                     {current} days
+                   </div>
+                 </div>
+
+                 <div>
+                   <div className="flex items-center gap-1.5 text-xs text-muted">
+                     <Trophy size={13} className="text-amber-500" />
+                     Best
+                   </div>
+
+                   <div className="mt-1 text-sm font-semibold">
+                     {longest} days
+                   </div>
+                 </div>
+
+                 <div>
+                   <div className="text-xs text-muted">Completed</div>
+
+                   <div className="mt-1 text-sm font-semibold">
+                     {keys.length} times
+                   </div>
+                 </div>
+               </div>
+
+               {/* Actions */}
+               <div className="mt-4 pt-3 border-t border-(--divider) flex items-center justify-end gap-1">
+                 <button
+                   className="btn-ghost px-3 py-2 text-xs"
+                   onClick={() => {
+                     setEditing(h);
+                     setFormOpen(true);
+                   }}
+                 >
+                   <Pencil size={14} />
+                   Edit
+                 </button>
+
+                 <button
+                   className="btn-ghost px-3 py-2 text-xs"
+                   onClick={() => archive(h)}
+                 >
+                   {h.isArchived ? (
+                     <ArchiveRestore size={14} />
+                   ) : (
+                     <Archive size={14} />
+                   )}
+
+                   {h.isArchived ? "Restore" : "Archive"}
+                 </button>
+
+                 <button
+                   className="btn-ghost p-2 text-rose-500 hover:bg-rose-500/10"
+                   onClick={() => setDeleteTarget(h)}
+                   title="Delete"
+                 >
+                   <Trash2 size={15} />
+                 </button>
+               </div>
+             </div>
+           );
+         })}
+       </div>
+     )}
+
+     {/* Create / edit */}
+     <Modal
+       open={formOpen}
+       onClose={() => {
+         setFormOpen(false);
+         setEditing(null);
+       }}
+       title={editing ? "Edit habit" : "New habit"}
+     >
+       <HabitForm
+         initial={editing}
+         submitting={submitting}
+         onCancel={() => {
+           setFormOpen(false);
+           setEditing(null);
+         }}
+         onSubmit={save}
+       />
+     </Modal>
+
+     {/* Delete confirmation */}
+     <Modal
+       open={!!deleteTarget}
+       onClose={() => setDeleteTarget(null)}
+       title="Delete habit?"
+       maxWidth="max-w-sm"
+     >
+       <p className="text-sm text-soft leading-relaxed">
+         This will permanently delete <b>{deleteTarget?.name}</b> and all of its
+         history. This action cannot be undone.
+       </p>
+
+       <div className="flex justify-end gap-2 mt-5">
+         <button
+           className="btn-secondary"
+           onClick={() => setDeleteTarget(null)}
+         >
+           Cancel
+         </button>
+
+         <button
+           className="inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-rose-700 transition"
+           onClick={() => remove(deleteTarget)}
+         >
+           <Trash2 size={14} />
+           Delete
+         </button>
+       </div>
+     </Modal>
+
+     <HabitSuggestionModal
+       open={suggestOpen}
+       onClose={() => setSuggestOpen(false)}
+       onAccept={acceptSuggestion}
+     />
+   </div>
+ );
 }
