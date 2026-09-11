@@ -14,59 +14,64 @@ export default function WeeklyGrid({ habits, logsByHabit, days: customDays }) {
   }
 
   return (
-    <div className="card p-5 overflow-x-auto">
-      <div className="min-w-[520px]">
-        <div className="grid grid-cols-[180px_repeat(7,minmax(0,1fr))] gap-2 items-center mb-2">
-          <div className="text-xs font-medium text-muted uppercase tracking-wider">
+    <div className="rounded-3xl border border-(--divider) bg-(--surface-strong) p-5 overflow-x-auto">
+      <div className="min-w-130">
+        <div className="grid grid-cols-[180px_repeat(7,minmax(0,1fr))] gap-2 items-center mb-3">
+          <div className="text-xs font-medium text-muted uppercase tracking-[0.14em]">
             Habit
           </div>
+
           {days.map((d) => (
             <div
               key={d.key}
-              className={`text-center text-xs font-medium ${
-                d.key === todayKey ? "text-brand-600 dark:text-brand-300" : "text-muted"
+              className={`text-center text-xs ${
+                d.key === todayKey
+                  ? "text-brand-700 dark:text-brand-300 font-semibold"
+                  : "text-muted"
               }`}
             >
               <div>{d.label}</div>
-              <div className="text-faint">{d.short}</div>
+              <div className="text-faint mt-0.5">{d.short}</div>
             </div>
           ))}
         </div>
 
         {habits.map((h) => {
           const done = new Set(logsByHabit[h._id] || []);
+
           return (
             <div
               key={h._id}
-              className="grid grid-cols-[180px_repeat(7,minmax(0,1fr))] gap-2 items-center py-2 border-t divider"
+              className="grid grid-cols-[180px_repeat(7,minmax(0,1fr))] gap-2 items-center py-3 border-t border-(--divider)"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-base shrink-0"
-                  style={{ background: `${h.color}26`, color: h.color }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0"
+                  style={{
+                    background: `${h.color}18`,
+                    color: h.color,
+                  }}
                 >
                   {h.icon}
                 </span>
+
                 <span className="text-sm truncate">{h.name}</span>
               </div>
+
               {days.map((d) => {
                 const isDone = done.has(d.key);
                 const future = d.key > todayKey;
+
                 return (
                   <div key={d.key} className="flex items-center justify-center">
                     <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center transition ${
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition ${
                         isDone
-                          ? "text-white shadow-md"
+                          ? "bg-brand-600 text-white"
                           : future
-                          ? "text-faint"
-                          : "text-faint"
+                            ? "bg-transparent border border-(--divider) text-faint opacity-50"
+                            : "bg-brand-50 dark:bg-brand-500/6 text-faint"
                       }`}
-                      style={
-                        isDone
-                          ? { background: h.color, boxShadow: `0 4px 12px ${h.color}55` }
-                          : { background: "var(--chip-bg)" }
-                      }
                     >
                       {isDone && <Check size={14} strokeWidth={3} />}
                     </div>

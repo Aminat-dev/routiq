@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Sparkles, ChevronDown, RefreshCw } from "lucide-react";
+import { Sparkles, RefreshCw } from "lucide-react";
 import api from "../api/axios.js";
 import Markdown from "./Markdown.jsx";
 
 export default function AIWeeklyReport() {
-  const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [generatedAt, setGeneratedAt] = useState(null);
@@ -15,7 +14,6 @@ export default function AIWeeklyReport() {
       const res = await api.post("/ai/weekly-report");
       setContent(res.data.content);
       setGeneratedAt(new Date());
-      setExpanded(true);
     } catch (e) {
       setContent("Failed to generate report. Please try again.");
     } finally {
@@ -24,78 +22,75 @@ export default function AIWeeklyReport() {
   };
 
   return (
-    <div className="card p-5 relative overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none opacity-40"
-        style={{
-          background:
-            "radial-gradient(circle at 0% 0%, rgba(99,102,241,0.25), transparent 60%)",
-        }}
-      />
-      <button
-        onClick={() => setExpanded((e) => !e)}
-        className="w-full flex items-center gap-3 text-left relative"
-      >
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shrink-0 shadow-lg shadow-brand-500/30">
+    <div className="rounded-3xl bg-brand-900 text-white p-5 md:p-6 overflow-hidden">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-brand-300">
           <Sparkles size={18} />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium">AI Weekly Report</div>
-          <div className="text-xs text-muted">
-            {content
-              ? `Generated ${generatedAt ? generatedAt.toLocaleTimeString() : "now"}`
-              : "See patterns and personalised encouragement from the past 7 days"}
+
+        <div>
+          <div className="text-sm font-medium">Routiq AI</div>
+
+          <div className="text-xs text-brand-200/70">
+            Weekly habit intelligence
           </div>
         </div>
-        <ChevronDown
-          size={18}
-          className={`text-faint transition ${expanded ? "rotate-180" : ""}`}
-        />
-      </button>
+      </div>
 
-      {expanded && (
-        <div className="mt-4 animate-slide-up relative">
-          {!content && (
+      {!content && (
+        <>
+          <h3 className="text-xl font-semibold leading-tight">
+            Understand the story behind your week.
+          </h3>
+
+          <p className="mt-3 text-sm leading-relaxed text-brand-100/75">
+            Routiq can look at your recent activity and highlight patterns,
+            progress, and useful adjustments.
+          </p>
+
+          <button
+            onClick={generate}
+            disabled={loading}
+            className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-white text-brand-900 px-4 py-2.5 text-sm font-semibold hover:bg-brand-50 transition"
+          >
+            {loading ? (
+              <>
+                <RefreshCw size={14} className="animate-spin" />
+                Analysing...
+              </>
+            ) : (
+              <>
+                <Sparkles size={14} />
+                Generate insight
+              </>
+            )}
+          </button>
+        </>
+      )}
+
+      {content && (
+        <>
+          <div className="rounded-2xl bg-white/[0.07] border border-white/10 p-4 text-sm leading-relaxed">
+            <Markdown>{content}</Markdown>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="text-xs text-brand-200/60">
+              {generatedAt
+                ? `Generated ${generatedAt.toLocaleTimeString()}`
+                : "Generated now"}
+            </div>
+
             <button
               onClick={generate}
               disabled={loading}
-              className="btn-primary"
+              className="inline-flex items-center gap-2 text-xs text-brand-200 hover:text-white transition"
             >
-              {loading ? (
-                <>
-                  <RefreshCw size={14} className="animate-spin" />
-                  Analysing your week...
-                </>
-              ) : (
-                <>
-                  <Sparkles size={14} />
-                  Generate weekly report
-                </>
-              )}
+              <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+              Refresh
             </button>
-          )}
-
-          {content && (
-            <>
-              <Markdown className="mt-1 glass rounded-xl p-4 text-sm">
-                {content}
-              </Markdown>
-              <div className="mt-3 flex justify-end">
-                <button
-                  onClick={generate}
-                  disabled={loading}
-                  className="btn-ghost"
-                >
-                  <RefreshCw
-                    size={14}
-                    className={loading ? "animate-spin" : ""}
-                  />
-                  Regenerate
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

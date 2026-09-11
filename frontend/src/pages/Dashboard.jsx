@@ -66,8 +66,7 @@ export default function Dashboard() {
         if (!byId[l.habitId]) byId[l.habitId] = [];
         byId[l.habitId].push(l.completedDate);
       }
-      for (const k of Object.keys(byId))
-        byId[k] = byId[k].sort().reverse();
+      for (const k of Object.keys(byId)) byId[k] = byId[k].sort().reverse();
       setAllLogsByHabit(byId);
     } finally {
       setLoading(false);
@@ -80,7 +79,7 @@ export default function Dashboard() {
 
   const completedToday = useMemo(
     () => new Set(todayLogs.map((l) => String(l.habitId))),
-    [todayLogs]
+    [todayLogs],
   );
 
   const weekLogsByHabit = useMemo(() => {
@@ -105,17 +104,17 @@ export default function Dashboard() {
     : 0;
 
   const activeStreaks = Object.values(streaksById).filter(
-    (s) => s.current > 0
+    (s) => s.current > 0,
   ).length;
   const bestStreak = Math.max(
     0,
-    ...Object.values(streaksById).map((s) => s.longest)
+    ...Object.values(streaksById).map((s) => s.longest),
   );
 
   const weekTotal = habits.length * 7;
   const weekDone = Object.values(weekLogsByHabit).reduce(
     (s, arr) => s + arr.length,
-    0
+    0,
   );
   const weekRate = weekTotal ? Math.round((weekDone / weekTotal) * 100) : 0;
 
@@ -124,7 +123,7 @@ export default function Dashboard() {
     if (recoveryHabit) return;
     if (!habits.length) return;
     const dismissed = JSON.parse(
-      localStorage.getItem("recovery-dismissed") || "{}"
+      localStorage.getItem("recovery-dismissed") || "{}",
     );
     for (const h of habits) {
       const s = streaksById[h._id];
@@ -144,7 +143,7 @@ export default function Dashboard() {
         data: { habitId: habit._id, date: today },
       });
       setTodayLogs((logs) =>
-        logs.filter((l) => String(l.habitId) !== String(habit._id))
+        logs.filter((l) => String(l.habitId) !== String(habit._id)),
       );
       setAllLogsByHabit((prev) => {
         const next = { ...prev };
@@ -175,7 +174,9 @@ export default function Dashboard() {
     try {
       if (editing) {
         const res = await api.put(`/habits/${editing._id}`, data);
-        setHabits((hs) => hs.map((h) => (h._id === res.data._id ? res.data : h)));
+        setHabits((hs) =>
+          hs.map((h) => (h._id === res.data._id ? res.data : h)),
+        );
       } else {
         const res = await api.post("/habits", data);
         setHabits((hs) => [...hs, res.data]);
@@ -192,7 +193,7 @@ export default function Dashboard() {
     await api.delete(`/habits/${habit._id}`);
     setHabits((hs) => hs.filter((h) => h._id !== habit._id));
     setTodayLogs((ls) =>
-      ls.filter((l) => String(l.habitId) !== String(habit._id))
+      ls.filter((l) => String(l.habitId) !== String(habit._id)),
     );
     setAllLogsByHabit((prev) => {
       const next = { ...prev };
@@ -206,7 +207,8 @@ export default function Dashboard() {
     const res = await api.put(`/habits/${habit._id}/archive`);
     if (res.data.isArchived)
       setHabits((hs) => hs.filter((h) => h._id !== habit._id));
-    else setHabits((hs) => hs.map((h) => (h._id === res.data._id ? res.data : h)));
+    else
+      setHabits((hs) => hs.map((h) => (h._id === res.data._id ? res.data : h)));
   };
 
   const acceptSuggestion = async (s) => {
@@ -225,28 +227,36 @@ export default function Dashboard() {
   if (loading) return <LoadingSpinner full />;
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between gap-3">
+    <div className="space-y-7 animate-fade-in">
+      {/* Page header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            Hey {user?.name?.split(" ")[0]} 👋
-          </h1>
-          <p className="text-sm text-muted mt-0.5">
+          <div className="text-sm text-muted">
             {new Date().toLocaleDateString(undefined, {
               weekday: "long",
               month: "long",
               day: "numeric",
             })}
+          </div>
+
+          <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
+            Good to see you, {user?.name?.split(" ")[0]}.
+          </h1>
+
+          <p className="mt-2 text-sm text-soft">
+            Keep today simple. Focus on the habits that matter.
           </p>
         </div>
+
         <div className="flex items-center gap-2">
           <button
             className="btn-secondary"
             onClick={() => setSuggestOpen(true)}
           >
-            <Sparkles size={14} />
-            <span className="hidden sm:inline">Suggest a habit</span>
+            <Sparkles size={15} />
+            <span className="hidden sm:inline">Ask Routiq</span>
           </button>
+
           <button
             className="btn-primary"
             onClick={() => {
@@ -254,31 +264,37 @@ export default function Dashboard() {
               setFormOpen(true);
             }}
           >
-            <Plus size={14} />
+            <Plus size={15} />
             New habit
           </button>
         </div>
       </div>
 
+      {/* AI morning motivation */}
       <MorningMotivation />
 
+      {/* Streak recovery */}
       {recoveryHabit && (
         <StreakRecoveryCard
           habit={recoveryHabit}
           onDismiss={() => {
             const dismissed = JSON.parse(
-              localStorage.getItem("recovery-dismissed") || "{}"
+              localStorage.getItem("recovery-dismissed") || "{}",
             );
+
             dismissed[recoveryHabit._id] = Date.now();
+
             localStorage.setItem(
               "recovery-dismissed",
-              JSON.stringify(dismissed)
+              JSON.stringify(dismissed),
             );
+
             setRecoveryHabit(null);
           }}
         />
       )}
 
+      {/* Summary */}
       <SummaryCards
         totalHabits={habits.length}
         activeStreaks={activeStreaks}
@@ -286,71 +302,109 @@ export default function Dashboard() {
         weekRate={weekRate}
       />
 
-      <div className="card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="text-sm font-medium">Today's habits</div>
-            <div className="text-xs text-muted">
-              {completedToday.size} of {habits.length} complete
+      {/* Main dashboard area */}
+      <div className="grid xl:grid-cols-[1.35fr_0.65fr] gap-6 items-start">
+        {/* Today's habits */}
+        <section className="rounded-3xl border border-[var(--divider)] bg-[var(--surface-strong)] p-5 md:p-6">
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted">
+                Today
+              </div>
+
+              <h2 className="mt-1 text-xl font-semibold tracking-tight">
+                Your habits
+              </h2>
+
+              <p className="text-sm text-muted mt-1">
+                {completedToday.size} of {habits.length} completed
+              </p>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <ProgressRing value={todayProgress} size={52} stroke={5} />
+
+            <div className="relative shrink-0">
+              <ProgressRing value={todayProgress} size={58} stroke={5} />
+
               <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold">
                 {todayProgress}%
               </div>
             </div>
           </div>
-        </div>
 
-        {habits.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="text-5xl mb-3">🎯</div>
-            <div className="font-medium">Let's build your first habit</div>
-            <div className="text-sm text-muted mt-1">
-              Start small — something you can do in under 5 minutes.
-            </div>
-            <button
-              className="btn-primary mt-4"
-              onClick={() => setFormOpen(true)}
-            >
-              <Plus size={14} />
-              Create habit
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {habits.map((h) => (
-              <TodayHabitCard
-                key={h._id}
-                habit={h}
-                completed={completedToday.has(String(h._id))}
-                streak={streaksById[h._id]?.current || 0}
-                onToggle={() => toggle(h)}
-                onEdit={() => {
-                  setEditing(h);
+          {habits.length === 0 ? (
+            <div className="py-12 text-center">
+              <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 flex items-center justify-center mx-auto mb-4">
+                <Plus size={22} />
+              </div>
+
+              <h3 className="font-medium">Create your first habit</h3>
+
+              <p className="text-sm text-muted mt-2 max-w-sm mx-auto">
+                Start with something small and realistic. Consistency matters
+                more than intensity.
+              </p>
+
+              <button
+                className="btn-primary mt-5"
+                onClick={() => {
+                  setEditing(null);
                   setFormOpen(true);
                 }}
-                onArchive={() => archiveHabit(h)}
-                onDelete={() => setDeleteTarget(h)}
-              />
-            ))}
+              >
+                <Plus size={14} />
+                Add habit
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {habits.map((h) => (
+                <TodayHabitCard
+                  key={h._id}
+                  habit={h}
+                  completed={completedToday.has(String(h._id))}
+                  streak={streaksById[h._id]?.current || 0}
+                  onToggle={() => toggle(h)}
+                  onEdit={() => {
+                    setEditing(h);
+                    setFormOpen(true);
+                  }}
+                  onArchive={() => archiveHabit(h)}
+                  onDelete={() => setDeleteTarget(h)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* AI weekly report */}
+        <div className="xl:sticky xl:top-6">
+          <AIWeeklyReport />
+        </div>
+      </div>
+
+      {/* Progress overview */}
+      <section>
+        <div className="mb-4">
+          <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted">
+            Progress
           </div>
-        )}
-      </div>
 
-      <AIWeeklyReport />
-
-      <div className="grid lg:grid-cols-12 gap-5">
-        <div className="col-span-8">
-          <WeeklyGrid habits={habits} logsByHabit={weekLogsByHabit} />
+          <h2 className="mt-1 text-xl font-semibold tracking-tight">
+            Your week at a glance
+          </h2>
         </div>
-        <div className="col-span-4">
-          <HeatmapChart data={heatmap} />
-        </div>
-      </div>
 
+        <div className="grid lg:grid-cols-12 gap-5">
+          <div className="lg:col-span-8">
+            <WeeklyGrid habits={habits} logsByHabit={weekLogsByHabit} />
+          </div>
+
+          <div className="lg:col-span-4">
+            <HeatmapChart data={heatmap} />
+          </div>
+        </div>
+      </section>
+
+      {/* Habit form modal */}
       <Modal
         open={formOpen}
         onClose={() => {
@@ -370,6 +424,7 @@ export default function Dashboard() {
         />
       </Modal>
 
+      {/* Delete modal */}
       <Modal
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
@@ -378,8 +433,9 @@ export default function Dashboard() {
       >
         <p className="text-sm text-soft">
           This will permanently delete <b>{deleteTarget?.name}</b> and all its
-          history. This can't be undone.
+          history. This action cannot be undone.
         </p>
+
         <div className="flex justify-end gap-2 mt-5">
           <button
             className="btn-secondary"
@@ -387,8 +443,9 @@ export default function Dashboard() {
           >
             Cancel
           </button>
+
           <button
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 px-4 py-2.5 text-sm font-medium text-white hover:brightness-110 shadow-lg shadow-rose-500/30 transition"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-rose-700 transition"
             onClick={() => deleteHabit(deleteTarget)}
           >
             Delete

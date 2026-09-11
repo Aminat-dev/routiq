@@ -40,36 +40,48 @@ export default function TodayHabitCard({
 
   return (
     <div
-      className={`card p-4 flex items-center gap-4 transition ${completed
-        ? "ring-1 ring-brand-500/10 bg-brand-500/5 dark:bg-brand-500/3"
-        : ""
-        }`}
+      className={`group rounded-2xl border p-3.5 flex items-center gap-3 transition ${
+        completed
+          ? "border-brand-500/20 bg-brand-50/60 dark:bg-brand-500/6"
+          : "border-(--divider) bg-(--surface) hover:bg-(--surface-hover)"
+      }`}
     >
       <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
-        style={{ background: `${habit.color}26`, color: habit.color }}
+        className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+        style={{
+          background: `${habit.color}18`,
+          color: habit.color,
+        }}
       >
         {habit.icon}
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <div className="font-medium truncate">{habit.name}</div>
-          <span className="chip">{habit.category}</span>
+          <div
+            className={`font-medium truncate ${completed ? "text-soft" : ""}`}
+          >
+            {habit.name}
+          </div>
+
+          <span className="hidden sm:inline-flex text-[10px] px-2 py-1 rounded-full bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300">
+            {habit.category}
+          </span>
         </div>
+
         {habit.description && (
-          <div className="text-sm text-muted truncate mt-0.5">
+          <div className="text-xs text-muted truncate mt-1">
             {habit.description}
           </div>
         )}
       </div>
 
-      <div className="hidden sm:flex items-center gap-1 text-sm text-soft">
+      <div className="hidden sm:flex items-center gap-1 text-xs text-muted">
         <Flame
-          size={16}
-          className={streak > 0 ? "text-orange-500" : "text-faint"}
+          size={14}
+          className={streak > 0 ? "text-amber-500" : "text-faint"}
         />
-        <span className="font-medium">{streak}</span>
+        <span>{streak}</span>
       </div>
 
       <div className="relative">
@@ -90,32 +102,37 @@ export default function TodayHabitCard({
           createPortal(
             <>
               <div
-                className="fixed inset-0 z-[100]"
+                className="fixed inset-0 z-100"
                 onClick={() => setMenu(false)}
               />
+
               <div
-                className="fixed z-[110] glass-strong rounded-xl py-1 w-40 shadow-xl animate-fade-in"
+                className="fixed z-110 rounded-xl border border-(--divider) bg-(--surface-strong) py-1 w-40 shadow-xl animate-fade-in"
                 style={{ top: pos.top, left: pos.left }}
               >
                 <button
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-soft hover:bg-[var(--surface-hover)]"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-soft hover:bg-(--surface-hover)"
                   onClick={() => {
                     setMenu(false);
                     onEdit();
                   }}
                 >
-                  <Pencil size={14} /> Edit
+                  <Pencil size={14} />
+                  Edit
                 </button>
+
                 <button
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-soft hover:bg-[var(--surface-hover)]"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-soft hover:bg-(--surface-hover)"
                   onClick={() => {
                     setMenu(false);
                     onArchive();
                   }}
                 >
                   <Archive size={14} />
+
                   {habit.isArchived ? "Unarchive" : "Archive"}
                 </button>
+
                 <button
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-500 hover:bg-rose-500/10"
                   onClick={() => {
@@ -123,23 +140,25 @@ export default function TodayHabitCard({
                     onDelete();
                   }}
                 >
-                  <Trash2 size={14} /> Delete
+                  <Trash2 size={14} />
+                  Delete
                 </button>
               </div>
             </>,
-            document.body
+            document.body,
           )}
       </div>
 
       <button
         onClick={onToggle}
-        className={`shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition ${completed
-          ? "bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg shadow-brand-500/40 animate-pop"
-          : "bg-brand-100 border-2 border-border-brand-400 text-brand-400 hover:border-brand-400 hover:text-brand-400"
-          }`}
+        className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition ${
+          completed
+            ? "bg-brand-600 text-white shadow-sm animate-pop"
+            : "border-2 border-(--divider) text-faint hover:border-brand-400 hover:text-brand-600"
+        }`}
         aria-label={completed ? "Mark incomplete" : "Mark complete"}
       >
-        <Check size={20} strokeWidth={3} />
+        {completed && <Check size={18} strokeWidth={3} />}
       </button>
     </div>
   );

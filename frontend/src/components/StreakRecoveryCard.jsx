@@ -18,54 +18,49 @@ export default function StreakRecoveryCard({ habit, onDismiss }) {
   };
 
   return (
-    <div className="relative rounded-2xl p-5 glass overflow-hidden animate-slide-up">
-      <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          background:
-            "radial-gradient(circle at 0% 0%, rgba(244,114,182,0.22), transparent 55%), radial-gradient(circle at 100% 100%, rgba(239,68,68,0.15), transparent 55%)",
-        }}
-      />
+    <div className="relative rounded-2xl border border-amber-500/15 bg-amber-50/60 dark:bg-amber-500/6 p-4 animate-slide-up">
       <button
         onClick={onDismiss}
-        className="absolute top-3 right-3 text-soft hover:text-[var(--text)] z-10"
+        className="absolute top-3 right-3 text-muted hover:text-(--text)"
         aria-label="Dismiss"
       >
-        <X size={16} />
+        <X size={15} />
       </button>
 
-      <div className="flex items-start gap-3 pr-6 relative">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-rose-500/30">
-          <Heart size={18} />
+      <div className="flex items-start gap-3 pr-6">
+        <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-300 flex items-center justify-center shrink-0">
+          <Heart size={17} />
         </div>
+
         <div className="flex-1">
-          <div className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-300">
-            Streak paused · {habit.name}
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700 dark:text-amber-300">
+            Routine interrupted · {habit.name}
           </div>
-          <div className="mt-1 text-sm text-soft">
-            You had a great run. Broken streaks are part of the journey — let's
-            get back on track.
-          </div>
+
+          <p className="mt-1 text-sm text-soft leading-relaxed">
+            Missing a day doesn't erase your progress. Routiq can help you make
+            the next step easier.
+          </p>
 
           {!content ? (
             <button
-              className="mt-3 btn-primary"
+              className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-brand-700 dark:text-brand-300 hover:underline"
               onClick={generate}
               disabled={loading}
             >
               {loading ? (
                 <>
                   <RefreshCw size={14} className="animate-spin" />
-                  Building your plan...
+                  Building your recovery plan...
                 </>
               ) : (
-                "Get back on track"
+                "Get a recovery suggestion"
               )}
             </button>
           ) : (
-            <Markdown className="mt-3 glass rounded-xl p-4 text-sm">
-              {content}
-            </Markdown>
+            <div className="mt-3 rounded-xl bg-white/60 dark:bg-white/4 border border-(--divider) p-4 text-sm">
+              <Markdown>{content}</Markdown>
+            </div>
           )}
         </div>
       </div>

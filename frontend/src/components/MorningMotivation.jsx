@@ -29,32 +29,28 @@ export default function MorningMotivation() {
     return null;
 
   return (
-    <div className="relative rounded-2xl p-5 glass overflow-hidden animate-slide-up">
-      <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          background:
-            "radial-gradient(circle at 0% 0%, rgba(251,191,36,0.25), transparent 55%), radial-gradient(circle at 100% 100%, rgba(99,102,241,0.18), transparent 55%)",
-        }}
-      />
+    <div className="relative rounded-2xl border border-brand-500/15 bg-brand-50/60 dark:bg-brand-500/[0.06] p-4 animate-slide-up">
       <button
         onClick={() => setDismissed(true)}
-        className="absolute top-3 right-3 text-soft hover:text-[var(--text)] z-10"
+        className="absolute top-3 right-3 text-muted hover:text-[var(--text)]"
         aria-label="Dismiss"
       >
-        <X size={16} />
+        <X size={15} />
       </button>
-      <div className="flex items-start gap-3 pr-6 relative">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/30 animate-float">
-          <Sun size={20} />
+
+      <div className="flex items-start gap-3 pr-6">
+        <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-300 flex items-center justify-center shrink-0">
+          <Sun size={18} />
         </div>
+
         <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-            Good morning, {user.name?.split(" ")[0]}
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700 dark:text-brand-300">
+            Morning note
           </div>
-          <div className="mt-1 text-sm">
+
+          <div className="mt-1 text-sm text-soft leading-relaxed">
             {loading ? (
-              "Thinking of something nice to say..."
+              "Preparing something for your morning..."
             ) : (
               <Markdown>{content}</Markdown>
             )}
