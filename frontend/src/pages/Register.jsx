@@ -35,46 +35,94 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <button
-        onClick={toggle}
-        className="fixed top-4 right-4 p-2.5 rounded-xl glass"
-        aria-label="Toggle theme"
-      >
-        {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-      </button>
+    <div className="min-h-screen grid lg:grid-cols-2">
+      {/* Left brand panel */}
+      <div className="hidden lg:flex relative overflow-hidden bg-brand-900 text-white p-12 xl:p-16 flex-col justify-between">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-brand-500/20 blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-amber-400/10 blur-3xl" />
+        </div>
 
-      <div className="w-full max-w-md">
-        <Link
-          to="/"
-          className="flex items-center justify-center gap-2 mb-6"
-        >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg shadow-brand-500/30">
-            <Sparkles size={18} />
-          </div>
-          <span className="font-semibold text-lg">AI Habit Tracker</span>
+        <Link to="/" className="relative flex items-center gap-3 w-fit">
+          <img
+            src="../public/Routiq.png"
+            alt="Routiq"
+            width="150"
+            height="80"
+          />
         </Link>
 
-        <div className="card p-7">
-          <h1 className="text-2xl font-semibold">Create your account</h1>
-          <p className="text-sm text-muted mt-1">
-            Free forever. Takes 30 seconds.
-          </p>
+        <div className="relative max-w-lg">
+          <div className="inline-flex items-center gap-2 text-brand-300 text-sm font-medium mb-5">
+            <Sparkles size={14} />
+            YOUR ROUTINE STARTS HERE
+          </div>
 
-          <form onSubmit={submit} className="mt-6 space-y-4">
+          <h1 className="text-4xl xl:text-5xl font-semibold tracking-tight leading-tight">
+            Build better days,
+            <br />
+            one habit at a time.
+          </h1>
+
+          <p className="mt-5 text-brand-100/75 leading-relaxed max-w-md">
+            Create routines that fit your life and let Routiq help you turn
+            daily actions into long-term progress.
+          </p>
+        </div>
+
+        <div className="relative text-sm text-brand-200/60">
+          Plan today. A better you tomorrow.
+        </div>
+      </div>
+
+      {/* Registration form */}
+      <div className="relative flex items-center justify-center px-6 py-12 md:px-10">
+        <button
+          onClick={toggle}
+          className="absolute top-6 right-6 btn-ghost p-2.5"
+          aria-label="Toggle theme"
+        >
+          {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <Link to="/" className="relative flex items-center gap-3 w-fit">
+            <img
+              src="../public/Routiq.png"
+              alt="Routiq"
+              width="150"
+              height="80"
+            />
+          </Link>
+
+          <div className="mb-8">
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Create your account
+            </h2>
+
+            <p className="mt-2 text-soft">
+              Start building a routine that works for you.
+            </p>
+          </div>
+
+          <form onSubmit={submit} className="space-y-5">
             <div>
-              <label className="label">Name</label>
+              <label className="label">Your name</label>
+
               <input
                 className="input"
                 value={form.name}
                 onChange={set("name")}
-                placeholder="Your name"
+                placeholder="Enter your name"
                 required
                 autoFocus
               />
             </div>
+
             <div>
-              <label className="label">Email</label>
+              <label className="label">Email address</label>
+
               <input
                 className="input"
                 type="email"
@@ -84,8 +132,10 @@ export default function Register() {
                 required
               />
             </div>
+
             <div>
               <label className="label">Password</label>
+
               <input
                 className="input"
                 type="password"
@@ -94,25 +144,34 @@ export default function Register() {
                 placeholder="At least 6 characters"
                 required
               />
+
+              <p className="mt-2 text-xs text-muted">
+                Use at least 6 characters.
+              </p>
             </div>
+
             {err && (
-              <div className="text-sm text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+              <div className="text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/15 rounded-xl px-4 py-3">
                 {err}
               </div>
             )}
+
             <button
               type="submit"
-              className="btn-primary w-full py-3"
+              className="btn-primary w-full py-3.5"
               disabled={loading}
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
 
-          <div className="text-center mt-5 text-sm text-soft">
-            Already have an account?{" "}
-            <Link to="/login" className="text-brand-600 dark:text-brand-300 font-medium">
-              Log in
+          <div className="mt-7 text-center text-sm text-soft">
+            Already have a Routiq account?{" "}
+            <Link
+              to="/login"
+              className="text-brand-700 dark:text-brand-300 font-medium hover:underline"
+            >
+              Sign in
             </Link>
           </div>
         </div>
