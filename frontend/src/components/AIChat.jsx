@@ -1,12 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  MessageCircle,
-  Send,
-  X,
-  Sparkles,
-  RefreshCw,
-  ArrowUpRight,
-} from "lucide-react";
+import { Send, X, Sparkles, RefreshCw, ArrowUpRight } from "lucide-react";
 import api from "../api/axios.js";
 import Markdown from "./Markdown.jsx";
 

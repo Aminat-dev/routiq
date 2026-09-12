@@ -11,47 +11,102 @@ import { useTheme } from "../context/ThemeContext.jsx";
 
 export default function WeeklyBarChart({ data, title = "Last 7 days" }) {
   const { theme } = useTheme();
-  const grid = theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(15,15,27,0.08)";
-  const tick = theme === "dark" ? "#8a8aa0" : "#6b6b78";
-  const tooltipBg = theme === "dark" ? "rgba(20,20,36,0.95)" : "rgba(255,255,255,0.95)";
-  const tooltipBorder = theme === "dark" ? "rgba(255,255,255,0.1)" : "rgba(15,15,27,0.08)";
+  const isDark = theme === "dark";
+
+  const grid = isDark ? "rgba(255,255,255,0.08)" : "rgba(6,78,59,0.08)";
+
+  const tick = isDark ? "#9CA3AF" : "#6B7280";
+
+  const tooltipStyle = {
+    background: isDark ? "rgba(7,23,17,0.96)" : "rgba(255,255,255,0.97)",
+    border: `1px solid ${
+      isDark ? "rgba(167,243,208,0.10)" : "rgba(6,78,59,0.10)"
+    }`,
+    borderRadius: 12,
+    fontSize: 12,
+    color: isDark ? "#F3F4F6" : "#111827",
+  };
+
+  const total = data?.reduce((sum, item) => sum + item.count, 0);
+
   return (
-    <div className="card p-5">
-      <div className="text-sm font-medium mb-3">{title}</div>
+    <div className="rounded-3xl border border-[var(--divider)] bg-[var(--surface-strong)] p-5">
+      <div className="flex items-start justify-between gap-3 mb-5">
+        <div>
+          <div className="text-sm font-semibold">{title}</div>
+
+          <div className="mt-1 text-xs text-muted">Daily habit completions</div>
+        </div>
+
+        <div className="text-right">
+          <div className="text-lg font-semibold">{total || 0}</div>
+
+          <div className="text-[10px] text-muted">total</div>
+        </div>
+      </div>
+
       <div style={{ width: "100%", height: 220 }}>
         <ResponsiveContainer>
-          <BarChart data={data}>
+          <BarChart
+            data={data}
+            margin={{
+              top: 4,
+              right: 4,
+              left: -20,
+              bottom: 0,
+            }}
+          >
             <defs>
-              <linearGradient id="wkbar" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#fcd34d" />
-                <stop offset="100%" stopColor="#d97706" />
+              <linearGradient id="routiqWeeklyBar" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10B981" />
+                <stop offset="100%" stopColor="#047857" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={grid}
+              vertical={false}
+            />
+
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 12, fill: tick }}
+              tick={{
+                fontSize: 11,
+                fill: tick,
+              }}
               axisLine={false}
               tickLine={false}
             />
+
             <YAxis
-              tick={{ fontSize: 12, fill: tick }}
+              tick={{
+                fontSize: 11,
+                fill: tick,
+              }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
             />
+
             <Tooltip
-              cursor={{ fill: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(15,15,27,0.04)" }}
-              contentStyle={{
-                background: tooltipBg,
-                border: `1px solid ${tooltipBorder}`,
-                borderRadius: 12,
-                fontSize: 12,
-                color: theme === "dark" ? "#ebebf5" : "#13131b",
-                backdropFilter: "blur(12px)",
+              cursor={{
+                fill: isDark
+                  ? "rgba(255,255,255,0.035)"
+                  : "rgba(16,185,129,0.045)",
+              }}
+              contentStyle={tooltipStyle}
+              labelStyle={{
+                fontWeight: 600,
               }}
             />
-            <Bar dataKey="count" fill="url(#wkbar)" radius={[6, 6, 0, 0]} />
+
+            <Bar
+              dataKey="count"
+              fill="url(#routiqWeeklyBar)"
+              radius={[7, 7, 0, 0]}
+              maxBarSize={34}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
