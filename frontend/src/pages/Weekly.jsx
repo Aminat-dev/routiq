@@ -61,17 +61,23 @@ export default function Weekly() {
   const topHabit = perHabitDone[0];
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="space-y-7 animate-fade-in">
+      {/* Page header */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            Weekly overview
+          <div className="text-sm text-muted">Weekly rhythm</div>
+
+          <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
+            Your week
           </h1>
-          <p className="text-sm text-muted mt-0.5">
-            See every habit across all 7 days at a glance.
+
+          <p className="mt-2 text-sm text-soft max-w-xl">
+            See how consistently you showed up across your habits this week.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Week navigation */}
+        <div className="flex flex-wrap items-center gap-2">
           <button
             className="btn-secondary px-3"
             onClick={() => setCursor((d) => addWeeks(d, -1))}
@@ -79,10 +85,16 @@ export default function Weekly() {
           >
             <ChevronLeft size={16} />
           </button>
-          <div className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl glass text-sm font-medium">
-            <CalendarDays size={14} className="text-muted" />
-            {format(days[0].date, "MMM d")} — {format(days[6].date, "MMM d, yyyy")}
+
+          <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-(--divider) bg-(--surface-strong) text-sm font-medium">
+            <CalendarDays
+              size={15}
+              className="text-brand-600 dark:text-brand-300"
+            />
+            {format(days[0].date, "MMM d")} —{" "}
+            {format(days[6].date, "MMM d, yyyy")}
           </div>
+
           <button
             className="btn-secondary px-3"
             onClick={() => setCursor((d) => addWeeks(d, 1))}
@@ -91,12 +103,13 @@ export default function Weekly() {
           >
             <ChevronRight size={16} />
           </button>
+
           {!isCurrentWeek && (
             <button
-              className="btn-ghost"
+              className="btn-ghost px-3"
               onClick={() => setCursor(new Date())}
             >
-              Today
+              Current week
             </button>
           )}
         </div>
@@ -106,70 +119,144 @@ export default function Weekly() {
         <LoadingSpinner full />
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="card p-4">
-              <div className="text-xs text-muted font-medium">Week rate</div>
-              <div className="text-2xl font-semibold mt-1">
-                {weekRate}%
+          {/* Weekly summary */}
+          <section>
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+              {/* Week rate */}
+              <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-4">
+                <div className="text-xs text-muted">Completion rate</div>
+
+                <div className="mt-2 flex items-end gap-1">
+                  <span className="text-2xl font-semibold">{weekRate}</span>
+
+                  <span className="text-sm text-muted mb-0.5">%</span>
+                </div>
+
+                <div className="mt-2 h-1.5 rounded-full bg-brand-50 dark:bg-brand-500/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-brand-600 transition-all duration-500"
+                    style={{ width: `${weekRate}%` }}
+                  />
+                </div>
+
+                <div className="text-xs text-muted mt-2">
+                  {totalDone} of {totalSlots} habit opportunities
+                </div>
               </div>
-              <div className="text-xs text-muted mt-0.5">
-                {totalDone} of {totalSlots}
+
+              {/* Total completions */}
+              <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-4">
+                <div className="text-xs text-muted">Completed</div>
+
+                <div className="mt-2 text-2xl font-semibold">{totalDone}</div>
+
+                <div className="text-xs text-muted mt-2">
+                  habits completed this week
+                </div>
               </div>
-            </div>
-            <div className="card p-4">
-              <div className="text-xs text-muted font-medium">
-                Total completions
+
+              {/* Best day */}
+              <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-4">
+                <div className="text-xs text-muted">Strongest day</div>
+
+                <div className="mt-2 text-xl font-semibold">
+                  {bestDay?.count ? bestDay.label : "—"}
+                </div>
+
+                <div className="text-xs text-muted mt-2">
+                  {bestDay?.count
+                    ? `${bestDay.count} habit${
+                        bestDay.count === 1 ? "" : "s"
+                      } completed`
+                    : "No completions yet"}
+                </div>
               </div>
-              <div className="text-2xl font-semibold mt-1">
-                {totalDone}
-              </div>
-              <div className="text-xs text-muted mt-0.5">this week</div>
-            </div>
-            <div className="card p-4">
-              <div className="text-xs text-muted font-medium">Best day</div>
-              <div className="text-2xl font-semibold mt-1">
-                {bestDay?.count ? bestDay.label : "—"}
-              </div>
-              <div className="text-xs text-muted mt-0.5">
-                {bestDay?.count ? `${bestDay.count} habits done` : "no data"}
-              </div>
-            </div>
-            <div className="card p-4">
-              <div className="text-xs text-muted font-medium">
-                Top habit
-              </div>
-              <div className="text-2xl font-semibold mt-1 truncate">
+
+              {/* Top habit */}
+              <div className="rounded-2xl border border-(--divider) bg-(--surface-strong) p-4">
+                <div className="text-xs text-muted">Most consistent habit</div>
+
                 {topHabit?.count ? (
                   <>
-                    <span className="mr-1">{topHabit.h.icon}</span>
-                    <span className="text-base font-medium align-middle">
-                      {topHabit.h.name}
-                    </span>
+                    <div className="mt-2 flex items-center gap-2 min-w-0">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0"
+                        style={{
+                          background: `${topHabit.h.color}18`,
+                          color: topHabit.h.color,
+                        }}
+                      >
+                        {topHabit.h.icon}
+                      </div>
+
+                      <div className="font-semibold truncate">
+                        {topHabit.h.name}
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-muted mt-2">
+                      Completed {topHabit.count} of 7 days
+                    </div>
                   </>
                 ) : (
-                  "—"
+                  <>
+                    <div className="mt-2 text-xl font-semibold">—</div>
+
+                    <div className="text-xs text-muted mt-2">
+                      No completions yet
+                    </div>
+                  </>
                 )}
               </div>
-              <div className="text-xs text-muted mt-0.5">
-                {topHabit?.count ? `${topHabit.count}/7 days` : "no data"}
-              </div>
             </div>
-          </div>
+          </section>
 
-          {habits.length === 0 ? (
-            <div className="card p-10 text-center">
-              <div className="text-5xl mb-3">📅</div>
-              <div className="font-medium">No habits yet</div>
-              <div className="text-sm text-muted mt-1">
-                Create a habit to start filling in your weekly grid.
+          {/* Weekly activity */}
+          <section>
+            <div className="mb-4">
+              <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted">
+                Activity
               </div>
+
+              <h2 className="mt-1 text-xl font-semibold tracking-tight">
+                Habit consistency
+              </h2>
+
+              <p className="mt-1 text-sm text-muted">
+                A simple view of which habits you completed each day.
+              </p>
             </div>
-          ) : (
-            <WeeklyGrid
-              habits={habits}
-              logsByHabit={logsByHabit}
-              days={days}
-            />
+
+            {habits.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-(--divider) bg-(--surface) px-6 py-14 text-center">
+                <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 flex items-center justify-center mx-auto">
+                  <CalendarDays size={22} />
+                </div>
+
+                <h3 className="mt-4 font-semibold">No habits to review yet</h3>
+
+                <p className="mt-2 text-sm text-muted max-w-sm mx-auto leading-relaxed">
+                  Once you create habits and begin completing them, your weekly
+                  pattern will appear here.
+                </p>
+              </div>
+            ) : (
+              <WeeklyGrid
+                habits={habits}
+                logsByHabit={logsByHabit}
+                days={days}
+              />
+            )}
+          </section>
+
+          {/* Small weekly context */}
+          {habits.length > 0 && (
+            <div className="rounded-2xl border border-brand-500/10 bg-brand-50/50 dark:bg-brand-500/5 px-5 py-4">
+              <p className="text-sm text-soft leading-relaxed">
+                A perfect week isn't the goal. Look for the routines you can
+                repeat consistently, then improve them gradually.
+              </p>
+            </div>
           )}
         </>
       )}
