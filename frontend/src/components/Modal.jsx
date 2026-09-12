@@ -1,7 +1,13 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 
-export default function Modal({ open, onClose, title, children, maxWidth = "max-w-lg" }) {
+export default function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  maxWidth = "max-w-lg",
+}) {
   useEffect(() => {
     if (!open) return;
     const handler = (e) => e.key === "Escape" && onClose();

@@ -7,7 +7,6 @@ import {
   BarChart3,
   LogOut,
   Settings,
-  Sparkles,
   Sun,
   Moon,
 } from "lucide-react";
@@ -52,12 +51,13 @@ export default function Sidebar() {
       {/* Brand */}
       <div className="px-5 py-5 border-b border-[var(--divider)]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-800 text-white flex items-center justify-center shadow-lg shadow-brand-500/20">
-            <Sparkles size={18} />
-          </div>
-
           <div>
-            <div className="font-semibold text-lg tracking-tight">Routiq</div>
+            <img
+              src="../public/Routiq.png"
+              alt="Routiq"
+              width="150"
+              height="80"
+            />
 
             <div className="text-[10px] tracking-[0.16em] text-faint">
               BUILD BETTER ROUTINES
